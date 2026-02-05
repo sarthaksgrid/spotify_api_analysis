@@ -1,0 +1,971 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
+    <meta charset="UTF-8">
+    <title>Beyond the Beats: What Spotify’s Data Really Says About Your Playlists</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --spotify-green: #1DB954;
+            --spotify-black: #0f0f0f;
+            --spotify-dark: #181818;
+            --spotify-card: #1e1e1e;
+            --spotify-grey: #b3b3b3;
+            --spotify-muted: #8a8a8a;
+            --spotify-white: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--spotify-black);
+            color: var(--spotify-white);
+            line-height: 1.75;
+            cursor: none; /* custom cursor */
+        }
+
+        /* ---------------- CUSTOM CURSOR ---------------- */
+        .cursor {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 14px;
+            height: 14px;
+            background-color: var(--spotify-green);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+        }
+
+        a:hover ~ .cursor {
+            transform: scale(1.6);
+        }
+
+        /* ---------------- HEADER ---------------- */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background-color: var(--spotify-green);
+            color: var(--spotify-black);
+        }
+
+        .header-inner {
+            max-width: 1200px;
+            margin: auto;
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .spotify-logo {
+            width: 140px;
+            height: auto;
+            object-fit: contain;
+        }
+
+        nav a {
+            margin-left: 24px;
+            color: var(--spotify-black);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        /* ---------------- PAGE LAYOUT ---------------- */
+        .page-shell {
+            display: grid;
+            grid-template-columns: 1fr minmax(0, 920px) 1fr;
+        }
+
+        .side-panel {
+            background-color: var(--spotify-dark);
+            padding: 48px 24px;
+            color: var(--spotify-muted);
+            font-size: 0.9rem;
+        }
+
+        .side-panel.left {
+            border-right: 1px solid #222;
+        }
+
+        .side-panel.right {
+            border-left: 1px solid #222;
+        }
+
+        .blog-container {
+            padding: 56px 24px 96px;
+        }
+
+        /* ---------------- TYPOGRAPHY ---------------- */
+
+        h1 {
+            font-size: 3.2rem;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 32px;
+        }
+
+        h2 {
+            font-size: 2.2rem;
+            margin-top: 96px;
+            margin-bottom: 28px;
+            font-weight: 700;
+        }
+
+        h3 {
+            font-size: 1.35rem;
+            margin-top: 56px;
+            margin-bottom: 16px;
+            font-weight: 600;
+        }
+
+        p {
+            font-size: 1.05rem;
+            color: var(--spotify-grey);
+            margin-bottom: 22px;
+        }
+
+        strong {
+            color: var(--spotify-white);
+            font-weight: 600;
+        }
+
+        .highlight {
+            color: var(--spotify-white);
+            font-weight: 600;
+        }
+
+        .accent {
+            color: var(--spotify-green);
+            font-weight: 600;
+        }
+
+        /* ---------------- UI ELEMENTS ---------------- */
+
+        .divider {
+            height: 1px;
+            background: linear-gradient(to right, transparent, #2a2a2a, transparent);
+            margin: 80px 0;
+        }
+
+        .info-card {
+            background-color: var(--spotify-card);
+            padding: 28px;
+            border-radius: 16px;
+            margin: 40px 0;
+        }
+
+        /* ---------------- GRAPHS ---------------- */
+       .graph-container {
+    width: 100%;
+    height: 420px;
+    margin: 48px auto 56px;
+}
+
+
+        a {
+            color: var(--spotify-green);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+/* ================= HERO TITLE – STRONG VISUAL ================= */
+
+.hero-title {
+    position: relative;
+    padding: 40px 48px;
+    margin-bottom: 56px;
+    background-color: #151515;
+    border-radius: 20px;
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.45);
+}
+
+/* Spotify green rail */
+.hero-title::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 24px;
+    bottom: 24px;
+    width: 6px;
+    background-color: var(--spotify-green);
+    border-radius: 4px;
+}
+
+#page-title {
+    font-size: 3.8rem;
+    line-height: 1.12;
+    letter-spacing: -0.03em;
+    margin: 0;
+    color: var(--spotify-white);
+}
+
+/* Responsive – still bold on mobile */
+@media (max-width: 768px) {
+    .hero-title {
+        padding: 28px 24px;
+    }
+
+    #page-title {
+        font-size: 2.6rem;
+    }
+}
+
+
+
+
+/* Force-hide native cursor everywhere */
+*,
+*::before,
+*::after {
+    cursor: none !important;
+}
+
+
+
+    </style>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+
+</head>
+<body>
+
+    <!-- Custom Cursor -->
+    <div class="cursor"></div>
+
+    <!-- HEADER -->
+    <header>
+        <div class="header-inner">
+            <div class="header-left">
+                <img 
+                    src="assets/spotify-logo.png" 
+                    alt="Spotify logo"
+                    class="spotify-logo"
+                >
+            </div>
+
+            <nav>
+                <a href="#intro">Intro</a>
+                <a href="#happy">Happy</a>
+                <a href="#sad">Sad</a>
+                <a href="#results">Results</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- PAGE SHELL -->
+    <div class="page-shell">
+
+        <!-- LEFT SIDE PANEL (visual fill, not gradient) -->
+        <aside class="side-panel left">
+            
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="blog-container">
+        <!-- HERO SECTION -->
+        <section id="intro" class="hero">
+
+            <div class="hero-title">
+    <h1 id="page-title">Beyond the Beats: What Spotify’s Data Really Says About Your Playlists</h1>
+</div>
+
+
+            <p>
+                Ever wondered if your "<span class="highlight">Happy</span>" playlist is
+                actually making you happy, or if "<span class="highlight">Sad</span>" labels
+                are more about stillness than heartbreak?
+            </p>
+
+            <p>
+                In the world of music streaming, sound is transformed into data through
+                numerical scores like <span class="accent">Energy</span> and
+                <span class="accent">Valence</span>, a measure of musical positiveness, to
+                organise tracks into mood-based genres.
+            </p>
+
+            <p>
+                This analysis explores whether these labels reflect genuine musical emotion
+                or primarily encode physical intensity, targeting curators and analysts who
+                rely on audio features to infer mood.
+            </p>
+
+            <p>
+                Spotify largely defines these categories in physical and rhythmic terms. The
+                "<span class="highlight">Happy</span>" genre is characterised by extreme
+                <span class="accent">Energy</span> and high tempo, focusing on loud, fast, and
+                physically "busy" tracks.
+            </p>
+
+            <p>
+                Conversely, the "<span class="highlight">Sad</span>" genre captures music
+                with low Loudness and minimal rhythmic attack, prioritising stillness and
+                lack of movement over actual emotional negativity.
+            </p>
+
+            <p>
+                Using a dataset of over <span class="highlight">114,000 tracks</span>, we
+                evaluate these categories as algorithmic classifications within Spotify’s
+                feature space.
+            </p>
+
+            <p>
+                By comparing their emotional and physical profiles against a multi-genre
+                baseline, we identify where these labels align with human perception and
+                where the algorithmic definitions begin to break down.
+            </p>
+
+        </section>
+
+        <div class="divider"></div>
+        <section>
+
+            <h2>Engineering a Clean Dataset</h2>
+
+            <div class="info-card">
+
+                <p>
+                    To ensure a fair comparison, we applied a multi-stage cleaning process to the
+                    raw dataset extracted via the Spotify Web API.
+                </p>
+
+                <p>
+                    This removed noise and inconsistencies, producing a high-quality analytical
+                    sample of <span class="highlight">7,879 tracks</span> and ensuring that observed
+                    patterns reflect Spotify’s labelling logic rather than data artefacts.
+                </p>
+
+                <p>
+                    We focused on <span class="highlight">12 core audio features</span>, prioritising
+                    <span class="accent">Valence</span> (tonal positiveness) and
+                    <span class="accent">Energy</span>/<span class="accent">Loudness</span>
+                    (physical intensity), which directly align with the research question.
+                </p>
+
+                <p>
+                    Over <span class="highlight">24,000 duplicate tracks</span> were removed to avoid
+                    skewed aggregates, and a baseline control group of
+                    <span class="highlight">11 diverse genres</span>,
+                    including Acoustic, Jazz, Classical, and Pop, was established to provide context
+                    beyond isolated genre comparisons.
+                </p>
+
+                <p>
+                    Genre names were standardised and incomplete records removed to ensure
+                    consistency.
+                </p>
+
+                <p>
+                    This preparation cleanly separates emotional tone from physical intensity,
+                    providing a reliable foundation for interpretation and downstream
+                    recommendations.
+                </p>
+
+            </div>
+
+            <div class="info-card">
+                <p>
+                    <strong>View on GitHUB :</strong><br>
+                    <a href="https://github.com/sarthaksgrid/spotify_api_analysis" target="_blank">
+                        https://github.com/sarthaksgrid/spotify_api_analysis
+                    </a>
+                </p>
+            </div>
+
+        </section>
+
+        <div class="divider"></div>
+        <section id="happy">
+
+            <h2>Part 1: The "Happy" Genre Paradox: Is Sunshine Actually Shadows?</h2>
+
+            <p>
+                We started with a simple check: does a song in the
+                "<span class="highlight">Happy</span>" genre actually sound positive?
+            </p>
+
+            <p>
+                To answer this, we used <span class="accent">Valence</span>, Spotify’s measure of
+                tonal positiveness derived from musical features such as key, harmony, and rhythm.
+            </p>
+
+            <p>
+                While <span class="accent">Valence</span> is not a direct measure of human emotion,
+                it provides a consistent and scalable proxy for comparing tonal mood across large
+                samples.
+            </p>
+
+            <h3>The Question: Does the Label Match the Mood?</h3>
+
+            <p>
+                We expected songs labeled as "<span class="highlight">Happy</span>" to lead the pack
+                in positivity. However, the data revealed an interesting mismatch.
+            </p>
+
+            <h3>1. The Mood Mountain</h3>
+
+            <div id="mood-mountain-happy" class="graph-container"></div>
+
+<script>
+function renderMoodMountainHappy() {
+ const happy = DATA.filter(d => isHappy(d)).map(d => d.valence);
+const other = DATA.filter(d => !isHappy(d)).map(d => d.valence);
+
+  Plotly.newPlot("mood-mountain-happy", [
+    {
+      x: other,
+      type: "histogram",
+      histnorm: "probability density",
+      name: "Other Genres",
+      marker: { color: "#555" },
+      opacity: 0.5
+    },
+    {
+      x: happy,
+      type: "histogram",
+      histnorm: "probability density",
+      name: "Happy Genre",
+      marker: { color: "#f4c430" },
+      opacity: 0.8
+    }
+  ], {
+    barmode: "overlay",
+    paper_bgcolor: "#0f0f0f",
+    plot_bgcolor: "#0f0f0f",
+    font: { color: "#ffffff" },
+    xaxis: { title: "Valence Score" },
+    yaxis: { title: "Density" }
+  });
+}
+</script>
+
+
+
+            <p>
+                The gold peak (<span class="highlight">Happy genre</span>) is shifted significantly
+                to the left, crowding into the negative-mood zone, while other music is more balanced
+                suggesting that the label "<span class="highlight">Happy</span>" is quite misleading
+                when it comes to the actual tonal positiveness of the tracks: the music is physically
+                fast, but tonally dark.
+            </p>
+
+            <h3>2. The Energy Paradox</h3>
+
+            <script>
+function renderEnergyParadoxHappy() {
+  const happy = DATA.filter(d => isHappy(d));
+const other = DATA.filter(d => !isHappy(d));
+
+
+ const avg = arr => arr.length ? arr.reduce((a,b)=>a+b,0)/arr.length : 0;
+
+
+  Plotly.newPlot("energy-paradox-happy", [
+    {
+      x: ["Energy", "Valence"],
+      y: [avg(happy.map(d=>d.energy)), avg(happy.map(d=>d.valence))],
+      name: "Happy Genre",
+      type: "bar",
+      marker: { color: "#f4c430" }
+    },
+    {
+      x: ["Energy", "Valence"],
+      y: [avg(other.map(d=>d.energy)), avg(other.map(d=>d.valence))],
+      name: "Other Genres",
+      type: "bar",
+      marker: { color: "#b3b3b3" }
+    }
+  ], {
+    barmode: "group",
+    yaxis: { range: [0,1] },
+    paper_bgcolor: "#0f0f0f",
+    plot_bgcolor: "#0f0f0f",
+    font: { color: "#ffffff" }
+  });
+}
+</script>
+
+            <p>
+                We brought in <span class="accent">Energy</span> (intensity and speed) to see if we
+                were getting an anomaly due to the tempo.
+            </p>
+
+            <div id="energy-paradox-happy" class="graph-container"></div>
+
+
+
+
+            <p>
+                Here is the major contrast we see: "<span class="highlight">Happy</span>" tracks
+                represent a massive paradox, boasting near-perfect
+                <span class="accent">Energy</span> (0.91)—nearly twice the intensity of the average
+                music library —while falling <span class="highlight">31.7%</span> behind in actual
+                tonal positiveness with an average <span class="accent">Valence</span> of 0.33
+                compared to the 0.48 baseline.
+            </p>
+
+            <p>
+                This comparison emphasises effect size and the direction of the difference across
+                distributions, confirming that the label primarily encodes physical intensity rather
+                than positive musical emotion.
+            </p>
+
+            <h3>3. The Happy Fingerprint</h3>
+
+            <div id="happy-fingerprint" class="graph-container"></div>
+
+<script>
+function renderHappyFingerprint() {
+  const happy = DATA.filter(d => isHappy(d));
+
+
+  Plotly.newPlot("happy-fingerprint", [{
+    x: happy.map(d => d.energy),
+    y: happy.map(d => d.valence),
+    type: "histogram2dcontour",
+    colorscale: "YlOrBr",
+    contours: { coloring: "fill" }
+  }], {
+    xaxis: { title: "Energy (Intensity & Speed)" },
+    yaxis: { title: "Valence (Emotional Positiveness)" },
+    paper_bgcolor: "#0f0f0f",
+    plot_bgcolor: "#0f0f0f",
+    font: { color: "#ffffff" }
+  });
+}
+</script>
+
+
+
+            <p>
+                “<span class="highlight">Happy</span>” tracks cluster tightly in a high-
+                <span class="accent">Energy</span>, low-<span class="accent">Valence</span> region,
+                indicating that the label is driven more by physical intensity than by tonal
+                positiveness.
+            </p>
+
+            <div class="info-card">
+                <h3>The Verdict: Intensity Over Emotion</h3>
+
+                <p>
+                    The evidence shows that Spotify’s
+                    “<span class="highlight">Happy</span>” label reflects high physical intensity
+                    rather than positive emotional tone. “<span class="highlight">Happy</span>”
+                    tracks consistently cluster in high-
+                    <span class="accent">Energy</span>, low-
+                    <span class="accent">Valence</span> regions, indicating an intensity-driven
+                    classification.
+                </p>
+
+                <p>
+                    <strong>Takeaway:</strong> For music that actually sounds sunny and upbeat,
+                    prioritise high <span class="accent">Valence</span> scores over the
+                    “<span class="highlight">Happy</span>” tag.
+                </p>
+            </div>
+
+        </section>
+
+        <div class="divider"></div>
+        <section id="sad">
+
+            <h2>Part 2: The Illusion of "Sad" Music : Is it Actually Depressing?</h2>
+
+            <p>
+                After discovering that the "<span class="highlight">Happy</span>" genre is more
+                about intensity than mood, we turned our focus to the
+                "<span class="highlight">Sad</span>" genre. Does this label actually deliver the
+                musical blues, or is it another case of data-label mismatch?
+            </p>
+
+            <h3>The Question: Is "Sad" Music Just "Slow" Music?</h3>
+
+            <p>
+                We wanted to see if songs labeled "<span class="highlight">Sad</span>" are actually
+                tonally negative (<span class="accent">Low Valence</span>) or if they are simply
+                characterised by low energy levels.
+            </p>
+
+            <h3>1. The Emotional Valley</h3>
+
+            <div id="mood-mountain-sad" class="graph-container"></div>
+<script>
+function renderMoodMountainSad() {
+const sad = DATA.filter(d => isSad(d)).map(d => d.valence);
+const other = DATA.filter(d => !isSad(d)).map(d => d.valence);
+
+
+  Plotly.newPlot("mood-mountain-sad", [
+    {
+      x: other,
+      type: "histogram",
+      histnorm: "probability density",
+      name: "Other Genres",
+      marker: { color: "#555555" },
+      opacity: 0.5
+    },
+    {
+      x: sad,
+      type: "histogram",
+      histnorm: "probability density",
+      name: "Sad Genre",
+      marker: { color: "#3B6FE0" },
+      opacity: 0.85
+    }
+  ], {
+    barmode: "overlay",
+    paper_bgcolor: "#0f0f0f",
+    plot_bgcolor: "#0f0f0f",
+    font: { color: "#ffffff" },
+    xaxis: { title: "Valence Score (0 = darker → 1 = brighter)" },
+    yaxis: { title: "Density" }
+  });
+}
+</script>
+
+
+
+
+            <p>
+                “<span class="highlight">Sad</span>” tracks lean toward lower
+                <span class="accent">Valence</span> but do not concentrate in extreme negative
+                ranges.
+            </p>
+
+            <p>
+                Unlike the “<span class="highlight">Happy</span>” label mismatch, the Sad genre
+                remains close to the emotional baseline, primarily avoiding high-euphoria peaks
+                rather than expressing consistently negative mood.
+            </p>
+
+            <h3>2. The "Sad" Profile</h3>
+
+            <p>
+                If the mood isn't that different, what is? We looked at the combination of
+                <span class="accent">Energy</span> and <span class="accent">Valence</span>.
+            </p>
+
+            <div id="energy-paradox-sad" class="graph-container"></div>
+
+<script>
+function renderEnergyParadoxSad() {
+  const sad = DATA.filter(d => isSad(d));
+const other = DATA.filter(d => !isSad(d));
+
+
+  const avg = arr => arr.reduce((a, b) => a + b, 0) / arr.length;
+
+  Plotly.newPlot("energy-paradox-sad", [
+    {
+      x: ["Energy", "Valence"],
+      y: [
+        avg(sad.map(d => d.energy)),
+        avg(sad.map(d => d.valence))
+      ],
+      type: "bar",
+      name: "Sad Genre",
+      marker: { color: "#3B6FE0" }
+    },
+    {
+      x: ["Energy", "Valence"],
+      y: [
+        avg(other.map(d => d.energy)),
+        avg(other.map(d => d.valence))
+      ],
+      type: "bar",
+      name: "Other Genres",
+      marker: { color: "#b3b3b3" }
+    }
+  ], {
+    barmode: "group",
+    yaxis: { range: [0, 1] },
+    paper_bgcolor: "#0f0f0f",
+    plot_bgcolor: "#0f0f0f",
+    font: { color: "#ffffff" }
+  });
+}
+</script>
+
+
+
+            <p>
+                The real difference is found in <span class="accent">Energy</span>, as tracks
+                labeled "<span class="highlight">Sad</span>" show a modest reduction in average
+                <span class="accent">Valence</span> compared to the library (0.44 vs. 0.46, ~5%).
+            </p>
+
+            <p>
+                This limited separation indicates that the
+                "<span class="highlight">Sad</span>" label remains close to the emotional baseline
+                rather than expressing extreme negative tone.
+            </p>
+
+            <p>
+                Instead, these songs are primarily characterised by physical intensity, sitting
+                roughly <span class="highlight">11%</span> lower in energy than the average music
+                library. They are consistently quieter and slower, creating a profile of calm
+                rather than a profile of depression.
+            </p>
+
+            <h3>3. The Sad Fingerprint</h3>
+
+            <p>
+                Finally, we mapped the "<span class="highlight">Sad</span>" tracks to see where they
+                live on the intensity-mood map.
+            </p>
+
+         <div id="sad-fingerprint" class="graph-container"></div>
+
+<script>
+function renderSadFingerprint() {
+  const sad = DATA.filter(d => isSad(d));
+
+  Plotly.newPlot("sad-fingerprint", [{
+    x: sad.map(d => d.energy),
+    y: sad.map(d => d.valence),
+    type: "histogram2dcontour",
+    colorscale: "Blues",
+    contours: { coloring: "fill" }
+  }], {
+    xaxis: { title: "Energy (Intensity & Speed)" },
+    yaxis: { title: "Valence (Emotional Positiveness)" },
+    paper_bgcolor: "#0f0f0f",
+    plot_bgcolor: "#0f0f0f",
+    font: { color: "#ffffff" }
+  });
+}
+</script>
+
+
+
+            <p>
+                “<span class="highlight">Sad</span>” tracks concentrate in a low-
+                <span class="accent">Energy</span>, lower-
+                <span class="accent">Valence</span> region, but with a broad distribution that
+                extends into moderate Valence and Energy ranges.
+            </p>
+
+            <p>
+                Unlike the tightly clustered “<span class="highlight">Happy</span>” genre, this
+                spread indicates that “<span class="highlight">Sad</span>” functions as a broad,
+                low-intensity label, covering music that avoids arousal rather than consistently
+                expressing strong negative emotion.
+            </p>
+
+            <div class="info-card">
+                <h3>The Verdict: Sadness is a "Physical Slowdown"</h3>
+
+                <p>
+                    In Spotify’s system, the “<span class="highlight">Sad</span>” label reflects
+                    low physical intensity more than emotional distress. Unlike the misleading
+                    “<span class="highlight">Happy</span>” tag, it is largely accurate, capturing
+                    quieter, slower tracks that avoid high-energy peaks.
+                </p>
+
+                <p>
+                    <strong>Takeaway:</strong> Use the “<span class="highlight">Sad</span>” tag as a
+                    reliable filter for calm, low-energy music. For genuinely depressing tracks,
+                    filter for ultra-low <span class="accent">Valence</span> (&lt; 0.2).
+                </p>
+            </div>
+
+        </section>
+
+        <div class="divider"></div>
+        <section id="results">
+
+            <h2>Interpreting the Results: Variance and Trade-Offs</h2>
+
+            <p>
+                While the observed <span class="accent">Valence</span> differences are statistically
+                detectable given the sample size, the substantial overlap in distributions highlights
+                high within-genre variance.
+            </p>
+
+            <p>
+                This study identifies a correlation between high-intensity physical markers and these
+                tags, but it avoids causal claims regarding listener sentiment, noting that descriptive
+                statistics are sufficient to highlight the algorithmic trade-off between
+                <span class="accent">Energy</span> and <span class="accent">Valence</span>.
+            </p>
+
+        </section>
+
+        <div class="divider"></div>
+
+        <section>
+
+            <h2>The Grand Finale: What the Data Taught Us</h2>
+
+            <p>
+                Our investigation reveals that Spotify’s genre labels are often functional physical
+                markers rather than true emotional reflections.
+            </p>
+
+            <p>
+                The "<span class="highlight">Happy</span>" tag is the ultimate paradox: it represents
+                songs that are nearly twice as energetic as average music but tonally
+                <span class="highlight">31.7%</span> less positive.
+            </p>
+
+            <p>
+                Meanwhile, "<span class="highlight">Sad</span>" acts as a reliable catch-all for
+                stillness, defined more by an <span class="highlight">11%</span> drop in energy than
+                actual emotional misery.
+            </p>
+
+            <p>
+                The final verdict is that Spotify’s ecosystem prioritises intensity over sentiment,
+                effectively treating "<span class="highlight">Happy</span>" as fast and
+                "<span class="highlight">Sad</span>" as quiet.
+            </p>
+
+            <p>
+                To truly curate your mood, look past human labels and trust underlying metrics like
+                <span class="accent">Energy</span> and <span class="accent">Valence</span>. The data
+                doesn’t change how the music feels, but it fundamentally changes how we understand
+                the vibe.
+            </p>
+
+            <p>
+                <strong>Don’t just listen to the label; listen to the data.</strong>
+            </p>
+
+        </section>
+
+        <div class="divider"></div>
+
+        <section>
+
+            <h2>Next Experiments</h2>
+
+            <h3>Is Louder Always Better?</h3>
+
+            <p>
+                Early results suggest that extremely loud tracks may actually be less popular.
+            </p>
+
+            <p>
+                We aim to identify the loudness threshold where intensity stops boosting engagement
+                and begins to hurt listener appeal.
+            </p>
+
+            <h3>Do Genres Have Hidden Musical Signatures?</h3>
+
+            <p>
+                Beyond tempo and energy, musical key may shape a genre’s identity.
+            </p>
+
+            <p>
+                This analysis would test whether certain genres consistently favour specific keys,
+                revealing hidden structural patterns in Spotify’s catalog.
+            </p>
+
+            <h3>Does a Voice Change the Mood Label?</h3>
+
+            <p>
+                This experiment examines whether vocal presence influences mood classification.
+            </p>
+
+            <p>
+                By comparing Instrumentalness, Speechiness, and
+                <span class="accent">Valence</span>, we can determine whether
+                “<span class="highlight">Sad</span>” reflects emotional tone—or simply the absence of
+                vocals—helping improve playlist filtering for focus and calm listening.
+            </p>
+
+        </section>
+
+        <!-- END OF BLOG -->
+
+        </main>
+
+        <!-- RIGHT SIDE PANEL -->
+        <aside class="side-panel right">
+            
+        </aside>
+
+    </div>
+
+    <!-- Custom Cursor Script -->
+    <script>
+        const cursor = document.querySelector('.cursor');
+
+        document.addEventListener('mousemove', e => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+    </script>
+
+<script>
+const HAPPY_GENRES = ["happy"];
+const SAD_GENRES = ["sad"];
+
+function isHappy(d) {
+  return d.genre && d.genre.toLowerCase() === "happy";
+}
+
+function isSad(d) {
+  return d.genre && d.genre.toLowerCase() === "sad";
+}
+</script>
+
+
+<script>
+let DATA = [];
+
+Papa.parse("tracks_cleaned.csv", {
+  download: true,
+  header: true,
+  dynamicTyping: true,
+  complete: function(results) {
+    DATA = results.data.filter(d =>
+      d.energy !== null &&
+      d.valence !== null
+    );
+    renderAllCharts();
+  }
+});
+
+function renderAllCharts() {
+  renderMoodMountainHappy();
+  renderEnergyParadoxHappy();
+  renderHappyFingerprint();
+  renderMoodMountainSad();
+  renderEnergyParadoxSad();
+  renderSadFingerprint();
+}
+</script>
+
+
+
+</body>
+</html>
+
