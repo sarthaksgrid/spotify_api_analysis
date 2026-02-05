@@ -1,28 +1,84 @@
-**Spotify Genre Paradox: Data Analysis**
+# Spotify Genre Paradox — Data Analysis
 
-This project explores the relationship between Spotify's categorical labels (Happy vs. Sad) and the actual musical attributes (Energy, Valence, Loudness) of the tracks.
-**1. Requirements**
+A concise data analysis exploring whether Spotify’s categorical mood labels (**Happy** vs. **Sad**) actually align with measurable audio features such as **Energy**, **Valence**, and **Loudness**.
 
-Ensure you have Python installed. You can install all necessary libraries by running:
+---
 
-pip install requirements.txt
+## Project Question
 
-**2. Project Structure & Code Snippets**
+**Do Spotify’s “Happy” and “Sad” genre labels reflect meaningful differences in audio characteristics, or are they misleading simplifications?**
 
-The project is divided into 7 Jupyter notebooks. To maintain data integrity, run them in the following numerical order:
+This project approaches the question from a data-driven perspective rather than subjective listening.
 
-*(**Note:** Only the first 3 notebooks are relevant for the project submission)* 
+---
 
-**01_data_cleaning.ipynb:** Cleans the raw Spotify dataset and standardizes column names to lowercase (e.g., energy, valence) to ensure compatibility across all notebooks.
+## Dataset
 
-**02_happy.ipynb:** Analyzes the "Happy" genre. It generates the Mood Mountain (Valence distribution) and the Happy Fingerprint (High Energy/Low Valence cluster).
+The dataset consists of Spotify tracks with extracted audio features, including:
 
-**03_sad.ipynb:** Focuses on the "Sad" genre. It identifies the Low-Intensity/Low-Mood Zone and creates the corresponding density contour plots.
+- `energy` – perceived intensity and activity  
+- `valence` – musical positiveness  
+- `loudness` – overall track loudness (dB)  
+- `genre_label` – Spotify mood classification (Happy / Sad)
 
-**04_dancibility.ipynb:** Examines the relationship between energy and danceability scores across various genres.
+Tracks were cleaned, filtered, and analysed using Python.
 
-**05_loudness.ipynb:** Investigates decibel levels and dynamic range, correlating physical volume with emotional valence.
+---
 
-**06_musical_keys.ipynb:** Analyzes the prevalence of Major vs. Minor keys and how they impact the algorithmic Valence score.
+## Methodology
 
-**07_correlation.ipynb:** The final summary notebook. It generates a correlation matrix and the Evidence Profile (merged boxplots) showing the paradox between Energy and Valence.
+1. **Data Cleaning**
+   - Removed missing and duplicate entries  
+   - Normalised feature ranges where required  
+
+2. **Exploratory Analysis**
+   - Compared distributions of energy, valence, and loudness  
+   - Visualised overlap between Happy and Sad tracks  
+
+3. **Comparative Evaluation**
+   - Tested whether label differences reflect statistically meaningful variation  
+   - Focused on *patterns*, not individual songs  
+
+---
+
+## Key Findings
+
+- **“Happy” tracks are not always high-energy**  
+  Many fall into mid-energy ranges rather than peak intensity.
+
+- **“Sad” tracks skew quieter and slower**, but are not necessarily emotionally depressing  
+  The label largely captures *low physical intensity*, not emotional distress.
+
+- **Valence is the strongest differentiator**, but overlap remains significant  
+
+**Takeaway:**  
+Spotify’s mood labels are **broad heuristics**, not precise emotional classifiers. Filtering directly by audio features (e.g. very low valence) produces more accurate mood-based playlists than relying on genre tags alone.
+
+---
+
+## Visualisations
+
+The project includes plots comparing:
+
+- Energy distributions (Happy vs. Sad)
+- Valence overlap across genres
+- Loudness differences and density
+
+These highlight where Spotify’s labels align — and where they blur.
+
+---
+
+## Tech Stack
+
+- Python  
+- Pandas  
+- Matplotlib / Seaborn  
+- Jupyter Notebook  
+
+---
+
+## How to Run
+
+1. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
