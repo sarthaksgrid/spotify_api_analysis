@@ -82,3 +82,6 @@ These highlight where Spotify’s labels align — and where they blur.
 1. Install dependencies:
    ```bash
    pip install -r requirements.txt
+
+## Created by : 
+Sarthak Anand Srivastava
