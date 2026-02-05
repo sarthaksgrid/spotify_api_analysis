@@ -1,4 +1,4 @@
-# Spotify Genre Paradox — Data Analysis
+# :headphones: Spotify Genre Paradox — Data Analysis
 
 A concise data analysis exploring whether Spotify’s categorical mood labels (**Happy** vs. **Sad**) actually align with measurable audio features such as **Energy**, **Valence**, and **Loudness**.
 
