@@ -3,7 +3,8 @@
 A concise data analysis exploring whether Spotify’s categorical mood labels (**Happy** vs. **Sad**) actually align with measurable audio features such as **Energy**, **Valence**, and **Loudness**.
 
 ---
-
+#**Refer to the Storytelling Submission.pdf for the complete in depth analysis of the project**
+---
 ## Project Question
 
 **Do Spotify’s “Happy” and “Sad” genre labels reflect meaningful differences in audio characteristics, or are they misleading simplifications?**
